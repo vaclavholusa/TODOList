@@ -2,12 +2,17 @@ namespace Todolist;
 
 public class TodoItemsRepository
 {
-    public List<TodoItem> Items { get; set; } = new List<TodoItem>();
+    private readonly TodolistContext context;
+
+    public TodoItemsRepository(TodolistContext context)
+    {
+        this.context = context;
+    }
 
     public void Seed()
     {
 
-        Items.AddRange(
+        context.Items.AddRange(
             Enumerable.Range(1, 5).Select(i =>
                 new TodoItem(i, $"Item #{i}", DateTime.Now)
                 {
@@ -17,23 +22,30 @@ public class TodoItemsRepository
                 }
             )
         );
+        context.SaveChanges();
+    }
+
+    public List<TodoItem> GetItems()
+    {
+        return context.Items.ToList();
     }
 
     public void AddNew(TodoItem item)
     {
-        var maxId = Items.Count > 0
-                    ? Items.Max(x => x.Id)
+        var maxId = context.Items.Count() > 0
+                    ? context.Items.Max(x => x.Id)
                     : 0;
 
         item.DateAdded = DateTime.Now;
         item.Id = maxId + 1;
 
-        Items.Add(item);
+        context.Items.Add(item);
+        context.SaveChanges();
     }
     
     public TodoItem? GetDetail(int id)
     {
-        return Items.FirstOrDefault(x => x.Id == id);
+        return context.Items.FirstOrDefault(x => x.Id == id);
     }
 
     public void DeleteItem(int id)
@@ -41,7 +53,8 @@ public class TodoItemsRepository
         var existingItem = GetDetail(id);
         if (existingItem != null)
         {
-            Items.Remove(existingItem);
+            context.Items.Remove(existingItem);
+            context.SaveChanges();
         }
     }
 
@@ -53,6 +66,9 @@ public class TodoItemsRepository
         item.Description = updatedItem.Description;
         item.Priority = updatedItem.Priority;
         item.Deadline = updatedItem.Deadline;
+        
+        context.SaveChanges();
+
         return item;
     }
 }
