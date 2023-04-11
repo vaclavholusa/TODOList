@@ -4,7 +4,7 @@ using Todolist;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<TodolistContext>(opts =>
-            opts.UseInMemoryDatabase("Todolist"));
+            opts.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB")));
 
 builder.Services.AddScoped<TodoItemsRepository>();
 
