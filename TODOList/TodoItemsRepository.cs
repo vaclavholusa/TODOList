@@ -14,7 +14,7 @@ public class TodoItemsRepository
 
         context.Items.AddRange(
             Enumerable.Range(1, 5).Select(i =>
-                new TodoItem(i, $"Item #{i}", DateTime.Now)
+                new TodoItem($"Item #{i}", DateTime.Now)
                 {
                     Priority = (Priority)(i % 2),
                     Deadline = DateTime.Today.AddDays(i * 2),
