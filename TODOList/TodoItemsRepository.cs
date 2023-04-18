@@ -25,9 +25,27 @@ public class TodoItemsRepository
         context.SaveChanges();
     }
 
-    public List<TodoItem> GetItems()
+    
+    public List<TodoItem> GetItems(DateTime? dateFrom, DateTime? dateTo)
     {
-        return context.Items.ToList();
+        if(dateFrom == null && dateTo == null)
+        {
+            return context.Items.ToList();
+        }
+        else if (dateFrom == null)
+        {
+            return context.Items.Where(i => i.Deadline < dateTo).ToList();
+        }
+        else if (dateTo == null)
+        {
+            return context.Items.Where(i => i.Deadline > dateFrom).ToList();
+        }
+        else
+        {
+            return context.Items
+                .Where(i => i.Deadline > dateFrom && i.Deadline < dateTo)
+                .ToList();
+        }
     }
 
     public void AddNew(TodoItem item)
@@ -70,6 +88,20 @@ public class TodoItemsRepository
         context.SaveChanges();
 
         return item;
+    }
+    
+    public void SetCompleted(int id)
+    {
+        var item = GetDetail(id);
+        item.DateFinished = DateTime.Now;
+        context.SaveChanges();
+    }
+
+    public void SetPriority(int id, Priority priority)
+    {
+        var item = GetDetail(id);
+        item.Priority = priority;
+        context.SaveChanges();
     }
 }
 
