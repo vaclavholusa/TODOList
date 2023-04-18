@@ -47,4 +47,12 @@ app.MapPut("/{id:int}", (int id, TodoItem updatedItem, TodoItemsRepository repo)
     }
 });
 
+app.MapPost("/{id}/complete", 
+    (int id, TodoItemsRepository repo) => repo.SetCompleted(id));
+
+
+app.MapPost("/{id}/priority/{priority}",
+    (int id, Priority priority, TodoItemsRepository repo) 
+        => repo.SetPriority(id, priority));
+
 app.Run();
